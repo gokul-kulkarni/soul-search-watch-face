@@ -1,11 +1,11 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-// A cardinal data pod: icon over value, framed by an arc open toward the centre.
-// The frame carries a faint tint of the field's colour.
+// A cardinal data pod at the edge: icon over value on a soft disc tinted with
+// the field's colour.
 module Pod {
 
-    const FRAME_HALF_SPAN = 110;
+    const DISC_TINT = 0.16;   // how strongly the disc shows the field colour
     const ICON_RATIO = 0.55;
 
     function draw(dc as Dc, field as Number, px as Numeric, py as Numeric, pr as Numeric, outwardDeg as Number) as Void {
@@ -15,11 +15,8 @@ module Pod {
         var n = Fields.numeric(field);
         var color = FieldStyle.tint(field, n);
 
-        dc.setPenWidth(Style.framePen());
-        dc.setColor(Theme.tint(color, Theme.FRAME_TINT), Graphics.COLOR_TRANSPARENT);
-        dc.drawArc(px, py, pr, Graphics.ARC_COUNTER_CLOCKWISE,
-            outwardDeg - FRAME_HALF_SPAN, outwardDeg + FRAME_HALF_SPAN);
-        dc.setPenWidth(1);
+        dc.setColor(Theme.tint(color, DISC_TINT), Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(px, py, pr);
 
         var topY = py - pr * 0.36;
         var valueY = py + pr * 0.30;

@@ -5,8 +5,8 @@ import Toybox.Math;
 // tap targets always match what is on screen. Fractions are of screen radius.
 module Layout {
 
-    const POD_DISTANCE = 0.64;
-    const POD_RADIUS = 0.20;
+    const POD_DISTANCE = 0.76;   // pods sit at the edge, between the arcs
+    const POD_RADIUS = 0.17;
     // Per pod: x direction, y direction, outward angle of its frame.
     const POD_DIRS = [[0, -1, 90], [-1, 0, 180], [1, 0, 0], [0, 1, 270]] as Array<Array<Number>>;
 

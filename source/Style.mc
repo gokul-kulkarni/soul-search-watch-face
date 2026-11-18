@@ -46,9 +46,6 @@ module Style {
         return ARC_PEN;
     }
 
-    function framePen() as Number {
-        return Settings.style == SERIF ? 1 : 2;
-    }
 
     function draw(dc as Dc) as Void {
         switch (Settings.style) {

@@ -1,5 +1,7 @@
 # Gokul Face — personal Connect IQ watch face (Forerunner 970)
 
+<img src="resources/drawables/launcher_icon.png" width="65" alt="Lotus launcher icon">
+
 Configurable, crash-safe, AMOLED-aware watch face. Sideloaded, not store-published.
 
 ## Styles (Customize → Style)
@@ -21,7 +23,7 @@ Screenshots from the Connect IQ simulator (Forerunner 970) with its sample data.
 
 | Style | Look | Slots used |
 |---|---|---|
-| Classic | Stacked Roboto Condensed Bold time, 4 pods + 4 arc gauges | all 8 |
+| Classic | Stacked Roboto Condensed Bold time, 4 arc gauges, 4 pods at the edge on soft tinted discs | all 8 |
 | Overlap | Poster-size digits: dim hours behind, bright minutes in front | the 4 arcs |
 | Serif | Pridi serif numerals on a dial: hairline ring, minute ticks, hour marks | the 4 pods, as text |
 | HUD | Seven-segment time, labelled outlined cells (1 above, 3 below) | the 4 pods |

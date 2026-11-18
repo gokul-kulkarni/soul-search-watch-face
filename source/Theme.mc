@@ -25,7 +25,6 @@ module Theme {
 
     // How strongly field colours show in tracks and pod frames (0 = invisible).
     const TRACK_TINT = 0.24;
-    const FRAME_TINT = 0.4;
     const LIGHT_DARKEN = 0.3;
 
     const LIGHT_THEME_MIN_BG = 0x808080;
