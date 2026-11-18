@@ -29,6 +29,7 @@ monkeyc ... -l 3                   # STRICT type check: run before every commit
 | `Permission 'ComplicationSubscriber' required` | using `Toybox.Complications` | add `<iq:uses-permission id="ComplicationSubscriber"/>` |
 | `mismatched input 'private'` | missing `;` on the previous const | check the line above |
 | `Undefined symbol ':i'` | variable used outside its loop | move the computation inside the loop |
+| `Object of type 'Float' does not match return type 'Number'` | a decimal constant (e.g. `SPAN = 55.3`) flows into a `Number` function | keep layout angles whole degrees, or `.toNumber()` |
 
 ## Conventions that kept the code healthy
 - Small modules, one job each (`Style*.mc`, `Glyphs*.mc`, `Fields.mc`/`FieldStyle.mc`).

@@ -16,7 +16,10 @@ be on the watch (`getSettingsView` + `Application.Storage`).
    `.prg`, sends the new one and verifies the size.
 4. Unplug: the watch installs on disconnect. Then hold UP → Watch Face → pick it.
 
-## Diagnose with ioreg first
+## Diagnose with ioreg first (before asking the user to re-plug)
+If the user says "not detected", check `ioreg` straight away: more than once the watch was already
+connected in MTP mode, and the "not detected" came from looking too early or at the wrong tool.
+
 ```
 ioreg -p IOUSB -l -w0 | grep -E '"(idVendor|idProduct)"'          # Garmin vendor = 2334
 ioreg -l -w0 -r -c IOUSBHostDevice | grep IOUserClientCreator        # who holds the device
@@ -28,7 +31,7 @@ log show --last 15m --style compact --predicate 'process == "kernel"' | grep -i 
 | `idProduct = 3`, class 255 | watch is in **Garmin mode** | switch USB Mode to MTP, replug |
 | `idProduct = 20949` (FR970) | **MTP mode**, good | install |
 | `IOUserClientCreator = ... Google Chrome` | Chrome holds it via WebUSB (even with no Garmin tabs) and flips it back to Garmin mode | quit Chrome fully (ask the user: it closes their tabs) |
-| `ptpcamerad` / Image Capture | macOS camera daemon grabs MTP devices | `pkill -x ptpcamerad` right before installing (harmless, it respawns) |
+| `ptpcamerad` / Image Capture | macOS camera daemon grabs MTP devices | `pkill -x ptpcamerad` right before installing (harmless, it respawns). It sometimes survives the kill (same PID), yet installs still succeed, so do not block on it |
 | No popup after mode switch | macOS accessory security may be blocking a "new" device | user checks System Settings → Privacy & Security → Allow accessories (a security setting: never change it yourself) |
 | OpenMTP open | it holds the device | quit OpenMTP |
 
@@ -39,3 +42,9 @@ log show --last 15m --style compact --predicate 'process == "kernel"' | grep -i 
 - With the uncached handle, `LIBMTP_Get_Folder_List` is empty: walk root → `GARMIN` → `Apps`
   with `LIBMTP_Get_Files_And_Folders` per level.
 - Always verify by listing the folder and comparing the file size.
+
+## Other notes
+- `pgrep -fl chrome` also matches Electron apps (VS Code, Postman, Claude, Orca: their "chrome_crashpad"
+  helpers). Check `IOUserClientCreator` instead to see whether Google Chrome really holds the watch.
+- After installing, the watch moves the `.prg` out of `GARMIN/Apps`, so the next install reports
+  "Installed" rather than "Replaced". That is normal.

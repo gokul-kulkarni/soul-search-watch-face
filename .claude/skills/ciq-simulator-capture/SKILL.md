@@ -17,8 +17,9 @@ Scripts in `scripts/` (copy to a scratch dir and run from there):
 2. **The owner name changes after a restart** ("ConnectIQ" vs "Connect IQ Device Simulator"), so
    match the window by PID and size (`awk '$(NF-1)==755'`), not by name.
 3. **Wait ~16 s after `monkeydo`.** A blue triangle means the app is still loading.
-4. **If every page shows the loading triangle, the simulator has stalled** after many reloads:
-   quit it (`osascript -e 'quit app "simulator"'; pkill -x simulator`), reopen, re-run.
+4. **If every page shows the loading triangle, the simulator has stalled** after many reloads
+   (seen after ~4–6 loads in a row): quit it (`osascript -e 'quit app "simulator"'; pkill -x simulator`),
+   reopen, wait ~15 s, re-run. For batches, check each capture or restart proactively.
 5. Crop offsets scale with window pixel width: for FR970 at width 1510 px the screen centre is
    (768, 912) with radius 452. Use `circle.sh`, which derives these from the width.
 6. Do not put the simulator's device skin (Garmin's artwork and logo) in public screenshots:
@@ -38,3 +39,15 @@ then switch back to "High Power". The simulator flags burn-in violations.
 ## Contact sheets
 ffmpeg (no drawtext here) stacks images: `ffmpeg -i a.png -i b.png -filter_complex "[0][1]hstack=2" out.png`.
 Labels must be drawn on the watch itself (see ciq-icon-workflow). `open -a Preview file.png` shows the user.
+
+## Keep README screenshots in sync
+- After ANY visual change, re-render **all** style screenshots in one pass with the same defaults,
+  not just the style you touched; shared code (arcs, icons, fonts) changes the others too.
+- `for f in docs/screenshots/*.png; do git log -1 --format=%h -- $f; done` shows which are stale.
+- Browsers and GitHub cache images: a hard refresh (Cmd+Shift+R) shows new ones.
+
+## Launcher icon from a render
+Draw the icon in a scratch preview, capture, crop its disc, mask it round and scale it to the device's
+launcher size (`launcherIcon` in the device's `compiler.json`; FR970 = 65×65, which also removes the
+"launcher icon will be scaled" warning):
+`ffmpeg -i full.png -vf "crop=D:D:X:Y,scale=130:130,format=rgba,geq=...a='if(lte(hypot(X-64.5,Y-64.5),64),255,0)',scale=65:65:flags=lanczos" resources/drawables/launcher_icon.png`
