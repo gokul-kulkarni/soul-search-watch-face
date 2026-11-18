@@ -18,6 +18,10 @@ class FaceView extends WatchUi.WatchFace {
 
     function onUpdate(dc as Dc) as Void {
         try {
+            // Smooth edges on arcs, icons, hands and segments.
+            if (dc has :setAntiAlias) {
+                dc.setAntiAlias(true);
+            }
             Fonts.refresh(Layout.r);
             if (_sleeping && System.getDeviceSettings().requiresBurnInProtection) {
                 Style.drawLowPower(dc);

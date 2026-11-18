@@ -48,6 +48,16 @@ module Fields {
         "Weekly run", "Altitude", "Calendar", "Vigorous min (wk)"
     ] as Array<String>;
 
+    // Compact labels for labelled cells (HUD), indexed by field id.
+    const SHORT = [
+        "", "HR", "STEPS", "BATT", "BODY", "STRESS",
+        "KCAL", "FLOORS", "INTENS", "NOTIF",
+        "TEMP", "SUN", "RECOV", "DATE",
+        "SLEEP", "VO2", "SPO2", "WIND", "UV", "HUMID",
+        "RAIN", "FEELS", "RISE", "SET", "RESP",
+        "RUN", "ALT", "CAL", "VIG"
+    ] as Array<String>;
+
     // Picker order: grouped health, activity, watch, weather/outdoor.
     const MENU_ORDER = [
         NONE,

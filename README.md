@@ -3,24 +3,44 @@
 Configurable, crash-safe, AMOLED-aware watch face. Sideloaded, not store-published.
 
 ## Styles (Customize → Style)
-| Style | Time font | Layout | Slots used |
-|---|---|---|---|
-| Classic | Roboto Condensed Bold, stacked | 4 pods + 4 arcs | all 8 |
-| Overlap | Roboto Condensed Bold, poster size, minutes overlap hours | 4 arcs | arcs |
-| Serif | Pridi (built-in serif) | Classic with hairline arcs/rings | all 8 |
-| HUD | Seven-segment, drawn in code | 1 field above, 3 below | 4 pods |
-| Minimal | Roboto Condensed Regular, one line | 1 data line + 2 lower arcs | bottom pod, lower arcs |
-| Analog | Hands, 60-tick dial | 4 pods inside the dial | 4 pods |
+
+<table>
+<tr>
+<td align="center"><img src="docs/screenshots/classic.png" width="220" alt="Classic style"><br><b>Classic</b></td>
+<td align="center"><img src="docs/screenshots/overlap.png" width="220" alt="Overlap style"><br><b>Overlap</b></td>
+<td align="center"><img src="docs/screenshots/serif.png" width="220" alt="Serif style"><br><b>Serif</b></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/screenshots/hud.png" width="220" alt="HUD style"><br><b>HUD</b></td>
+<td align="center"><img src="docs/screenshots/minimal.png" width="220" alt="Minimal style"><br><b>Minimal</b></td>
+<td align="center"><img src="docs/screenshots/analog.png" width="220" alt="Analog chronograph style"><br><b>Analog</b></td>
+</tr>
+</table>
+
+Screenshots from the Connect IQ simulator (Forerunner 970) with its sample data.
+
+| Style | Look | Slots used |
+|---|---|---|
+| Classic | Stacked Roboto Condensed Bold time, 4 pods + 4 arc gauges | all 8 |
+| Overlap | Poster-size digits: dim hours behind, bright minutes in front | the 4 arcs |
+| Serif | Pridi serif numerals on a dial: hairline ring, minute ticks, hour marks | the 4 pods, as text |
+| HUD | Seven-segment time, labelled outlined cells (1 above, 3 below) | the 4 pods |
+| Minimal | Large one-line time, thin progress ring round the bezel, date + one field | bottom pod, top-left arc (ring) |
+| Analog | Chronograph: sub-dials at 3 and 9, field at 6, bar markers, bold hands | left, right, bottom pods |
 
 Every style has its own always-on view; Minimal's keeps its data line.
-Arcs fill upward: top arcs toward 12, bottom arcs from 6 toward 9/3.
+Arcs fill upward: top arcs toward 12, bottom arcs from 6 toward 9/3. Edges are anti-aliased.
 
 ## Fields (any slot, 28 + None)
-Heart rate, steps, battery, Body Battery, stress, calories, floors, weekly active minutes,
-notifications, temperature, next sun event, recovery, date, **sleep score**, VO2 max,
-weekly intensity minutes, weekly vigorous minutes,
-Pulse Ox, wind (arrow follows wind direction), UV index, humidity, rain chance, feels like,
-sunrise, sunset, respiration, weekly run distance, altitude, next calendar event.
+| Group | Fields (icon) |
+|---|---|
+| Health | Heart rate (heart) · Body Battery (person with bolt) · Stress (disc with zigzag) · Sleep score (bed) · Pulse Ox (drop with bubbles) · Respiration (lungs) · Recovery (clock with countdown arrow) · VO2 max ("VO2" badge) |
+| Activity | Steps (footprints, full count e.g. 12,345) · Calories (flame, full count) · Floors (stairs) · Intensity min/wk (stopwatch with bolt) · Vigorous min/wk (sprinter with speed lines) · Weekly run (running shoe over week dots) |
+| Watch | Battery (fills to level) · Notifications (bell) · Date (calendar) · Next calendar event (calendar with event) |
+| Weather / outdoor | Temperature (live condition icon: clear, partly cloudy, cloudy, rain, snow, storm, fog; moon at night) · Feels like · Wind (gusts, value like "12 NE") · UV index · Humidity · Rain chance · Next sun event · Sunrise · Sunset · Altitude |
+
+Icons are solid glyphs drawn in code, so they take any colour. Values too wide for a pod or cell
+drop to a smaller font instead of overflowing.
 
 ## Customize (on the watch)
 Style · Theme · Time size · Hours / Minutes / Accent colour (17 colours or "Theme", with swatches) ·
@@ -36,23 +56,22 @@ Night, Glacier, Moss, Ember, Mono, Paper (light), Neon, Midnight. Each field has
 recovery, sleep score, Pulse Ox, UV, rain and temperature change colour with their value
 (deeper shades on light themes).
 
-## Always-on
-Dim, stacked clock on black that shifts each minute (AMOLED burn-in protection).
-
 ## Code map
 | File | Role |
 |---|---|
-| `FaceView.mc` | Draws arcs, pods, stacked time; crash fallback |
+| `FaceView.mc` | Hands drawing to the active style; anti-aliasing; crash fallback |
 | `Layout.mc` | Slot positions, shared by drawing and long-press hit-testing |
 | `FaceDelegate.mc` | Long-press → open the field's Garmin app |
-| `Gauge.mc` / `Pod.mc` | The two slot renderers |
+| `Style*.mc` | One file per style (Classic, Overlap, Serif, HUD, Minimal, Analog) |
+| `Gauge.mc` / `Pod.mc` / `Dial.mc` / `Segments.mc` | Arc gauges, pods, dial ticks, seven-segment digits |
 | `Fields.mc` | Field catalogue: ids, names, one read per field, long-press target |
 | `FieldStyle.mc` | Text, gauge fill and value-driven colour per field |
 | `Sensors.mc` / `Complic.mc` / `Sun.mc` / `WeatherData.mc` | Data sources: sensors, Garmin complications (sleep, VO2 max...), weather |
-| `Icons.mc` / `IconsExtra.mc` | Icons drawn from shapes, so they recolour freely |
+| `Icons.mc` / `Glyphs*.mc` | Field → icon; solid glyphs drawn from shapes, so they recolour freely |
 | `Theme.mc` / `Palette.mc` / `Fonts.mc` / `TimeSize.mc` | Themes, picker colours, fonts, time sizes |
 | `Settings.mc` / `Options.mc` / `SettingsMenu.mc` | Stored settings, their choices, the picker menus |
-| `LowPower.mc` | Always-on view |
+| `LowPower.mc` | Shared always-on helpers |
+| `tools/mtp-install.c` | `make install` helper: copies the build to the watch over MTP |
 
 ## One-time setup
 1. Download the **Connect IQ SDK Manager** from https://developer.garmin.com/connect-iq/sdk/

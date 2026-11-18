@@ -1,14 +1,14 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-// Classic (and Serif, which shares this layout): 4 arcs, 4 pods, stacked time.
+// Classic: 4 arcs, 4 pods, stacked time.
 // Also holds the arc/pod/time building blocks other styles reuse.
 module StyleClassic {
 
     function draw(dc as Dc) as Void {
         drawArcs(dc, [0, 1, 2, 3]);
         drawPods(dc, Layout.POD_DISTANCE, Layout.POD_RADIUS);
-        drawStackedTime(dc, Layout.r * TimeSize.offset(), false);
+        drawStackedTime(dc, Layout.r * TimeSize.offset());
     }
 
     // Arc gauges by index (0 TL, 1 TR, 2 BL, 3 BR), each showing its slot's field.
@@ -27,22 +27,13 @@ module StyleClassic {
         }
     }
 
-    // Hours over minutes. With halo, minutes get a background-coloured outline
-    // so they stay legible where they overlap the hours.
-    function drawStackedTime(dc as Dc, offset as Numeric, halo as Boolean) as Void {
+    // Hours over minutes.
+    function drawStackedTime(dc as Dc, offset as Numeric) as Void {
         var p = Clock.stackedParts();
         var cx = Layout.cx;
         var cy = Layout.cy;
         dc.setColor(Theme.color(Theme.HOUR), Graphics.COLOR_TRANSPARENT);
         dc.drawText(cx, cy - offset, Fonts.time, p[0], Text.CENTER);
-        if (halo) {
-            var h = (Layout.r * 0.02).toNumber() + 1;
-            dc.setColor(Theme.color(Theme.BG), Graphics.COLOR_TRANSPARENT);
-            dc.drawText(cx - h, cy + offset, Fonts.time, p[1], Text.CENTER);
-            dc.drawText(cx + h, cy + offset, Fonts.time, p[1], Text.CENTER);
-            dc.drawText(cx, cy + offset - h, Fonts.time, p[1], Text.CENTER);
-            dc.drawText(cx, cy + offset + h, Fonts.time, p[1], Text.CENTER);
-        }
         dc.setColor(Theme.color(Theme.MINUTE), Graphics.COLOR_TRANSPARENT);
         dc.drawText(cx, cy + offset, Fonts.time, p[1], Text.CENTER);
     }

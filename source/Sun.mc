@@ -38,6 +38,20 @@ module Sun {
         return celsius;
     }
 
+    // True between today's sunset and sunrise; false if unknown.
+    function isNight() as Boolean {
+        var c = conditions();
+        if (c == null) { return false; }
+        if (!(Weather has :getSunrise)) { return false; }
+        var loc = c.observationLocationPosition;
+        if (loc == null) { return false; }
+        var now = Time.now();
+        var rise = Weather.getSunrise(loc, now);
+        var set = Weather.getSunset(loc, now);
+        if (rise == null || set == null) { return false; }
+        return now.lessThan(rise) || set.lessThan(now);
+    }
+
     // True when the most recently formatted event was a sunrise.
     function isNextSunrise() as Boolean {
         return _isSunrise;

@@ -1,5 +1,6 @@
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.Math;
 
 // Diagonal bezel gauge: tinted track + progress arc with rounded caps, an icon
 // at the arc's vertical end, and the value set along the curve.
@@ -26,9 +27,9 @@ module Gauge {
         var frac = FieldStyle.progress(field, n);
         var color = FieldStyle.tint(field, n);
 
-        arc(dc, r, pen, start, start + dir * SPAN, dir, Theme.tint(color, Theme.TRACK_TINT));
+        arc(dc, Layout.cx, Layout.cy, r, pen, start, start + dir * SPAN, dir, Theme.tint(color, Theme.TRACK_TINT));
         if (frac != null && frac > 0.0) {
-            arc(dc, r, pen, start, start + dir * SPAN * frac, dir, color);
+            arc(dc, Layout.cx, Layout.cy, r, pen, start, start + dir * SPAN * frac, dir, color);
         }
 
         var iconDeg = spec[2];
@@ -38,20 +39,26 @@ module Gauge {
         label(dc, radius * (1 - TEXT_INSET), start + dir * SPAN / 2, FieldStyle.format(field, n));
     }
 
-    function arc(dc as Dc, r as Numeric, pen as Number, from as Numeric, to as Numeric,
+    // Smooth native arc with clean flat ends. Round caps were dropped: the
+    // device strokes thick arcs at angle-dependent offsets, so added caps never
+    // sit flush, and polygon-built arcs look faceted at this size.
+    function arc(dc as Dc, cx as Numeric, cy as Numeric, r as Numeric, pen as Number, from as Numeric, to as Numeric,
                  dir as Number, color as Number) as Void {
-        var cx = Layout.cx;
-        var cy = Layout.cy;
+        if (from.toNumber() == to.toNumber()) {
+            return;
+        }
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(pen);
-        var attr = dir > 0 ? Graphics.ARC_COUNTER_CLOCKWISE : Graphics.ARC_CLOCKWISE;
-        if (from.toNumber() != to.toNumber()) {
-            dc.drawArc(cx, cy, r, attr, from, to);
-        }
+        dc.drawArc(cx, cy, r, dir > 0 ? Graphics.ARC_COUNTER_CLOCKWISE : Graphics.ARC_CLOCKWISE, from, to);
         dc.setPenWidth(1);
-        var cap = pen / 2;
-        dc.fillCircle(Geometry.x(cx, r, from), Geometry.y(cy, r, from), cap);
-        dc.fillCircle(Geometry.x(cx, r, to), Geometry.y(cy, r, to), cap);
+    }
+
+    // Full smooth ring.
+    function ring(dc as Dc, cx as Numeric, cy as Numeric, r as Numeric, pen as Number, color as Number) as Void {
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        dc.setPenWidth(pen);
+        dc.drawCircle(cx, cy, r);
+        dc.setPenWidth(1);
     }
 
     // Text follows the curve; upper gauges read clockwise, lower ones counter-clockwise

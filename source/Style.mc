@@ -15,7 +15,6 @@ module Style {
     const NAMES = ["Classic", "Overlap", "Serif", "HUD", "Minimal", "Analog"] as Array<String>;
 
     const ARC_PEN = 0.034;
-    const ARC_PEN_HAIRLINE = 0.016;
 
     function count() as Number {
         return NAMES.size();
@@ -34,7 +33,8 @@ module Style {
     // Time font size relative to the chosen Large/Medium/Small size.
     function timeScale() as Float {
         if (Settings.style == OVERLAP) { return 1.55; }
-        if (Settings.style == MINIMAL) { return 0.85; }
+        if (Settings.style == SERIF) { return 1.3; }
+        if (Settings.style == MINIMAL) { return 1.2; }
         return 1.0;
     }
 
@@ -43,7 +43,7 @@ module Style {
     }
 
     function arcPenRatio() as Float {
-        return Settings.style == SERIF ? ARC_PEN_HAIRLINE : ARC_PEN;
+        return ARC_PEN;
     }
 
     function framePen() as Number {
@@ -53,6 +53,7 @@ module Style {
     function draw(dc as Dc) as Void {
         switch (Settings.style) {
             case OVERLAP: StyleOverlap.draw(dc); break;
+            case SERIF:   StyleSerif.draw(dc); break;
             case HUD:     StyleHud.draw(dc); break;
             case MINIMAL: StyleMinimal.draw(dc); break;
             case ANALOG:  StyleAnalog.draw(dc); break;
@@ -75,7 +76,8 @@ module Style {
             case OVERLAP: return StyleClassic.arcCenters([0, 1, 2, 3]);
             case HUD:     return StyleHud.centers();
             case MINIMAL: return StyleMinimal.centers();
-            case ANALOG:  return StyleClassic.podCenters(StyleAnalog.POD_DISTANCE);
+            case SERIF:   return StyleSerif.centers();
+            case ANALOG:  return StyleAnalog.centers();
         }
         var out = StyleClassic.podCenters(Layout.POD_DISTANCE);
         out.addAll(StyleClassic.arcCenters([0, 1, 2, 3]));

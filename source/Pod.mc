@@ -29,7 +29,8 @@ module Pod {
         } else {
             Icons.draw(dc, field, px, topY, pr * ICON_RATIO, color, FieldStyle.progress(field, n));
         }
+        var text = FieldStyle.format(field, n);
         dc.setColor(Theme.color(Theme.FG), Graphics.COLOR_TRANSPARENT);
-        dc.drawText(px, valueY, Fonts.value, FieldStyle.format(field, n), Text.CENTER);
+        dc.drawText(px, valueY, FieldStyle.fitFont(dc, text, pr * 1.7), text, Text.CENTER);
     }
 }

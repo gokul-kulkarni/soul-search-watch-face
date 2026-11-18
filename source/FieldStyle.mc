@@ -1,4 +1,5 @@
 import Toybox.Complications;
+import Toybox.Graphics;
 import Toybox.Lang;
 
 // How each field reads: text, gauge fill and value-driven colour.
@@ -17,7 +18,7 @@ module FieldStyle {
         if (n == null) { return Fields.PLACEHOLDER; }
         switch (id) {
             case Fields.STEPS:
-            case Fields.CALORIES:      return compact(n);
+            case Fields.CALORIES:      return grouped(n);
             case Fields.BATTERY:
             case Fields.PULSE_OX:
             case Fields.HUMIDITY:
@@ -25,7 +26,7 @@ module FieldStyle {
             case Fields.TEMPERATURE:
             case Fields.FEELS_LIKE:    return Sun.toUserUnits(n).format("%d") + "°";
             case Fields.RECOVERY:      return n.format("%d") + "h";
-            case Fields.WIND:          return WeatherData.windForUser(n).format("%d");
+            case Fields.WIND:          return windText(n);
         }
         return n.format("%d");
     }
@@ -45,11 +46,25 @@ module FieldStyle {
         return null;
     }
 
-    // 12345 -> "12k", 1234 -> "1.2k"
-    function compact(n as Number) as String {
-        if (n >= 10000) { return (n / 1000).format("%d") + "k"; }
-        if (n >= 1000) { return (n / 1000.0).format("%.1f") + "k"; }
-        return n.format("%d");
+    const COMPASS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] as Array<String>;
+
+    // "12 NE": speed in the user's units and the direction the wind comes from.
+    function windText(kmh as Number) as String {
+        var text = WeatherData.windForUser(kmh).format("%d");
+        var bearing = WeatherData.windBearing();
+        if (bearing == null) { return text; }
+        return text + " " + COMPASS[((bearing + 22) % 360) / 45];
+    }
+
+    // 12345 -> "12,345": full count with a thousands separator.
+    function grouped(n as Number) as String {
+        if (n < 1000) { return n.format("%d"); }
+        return (n / 1000).format("%d") + "," + (n % 1000).format("%03d");
+    }
+
+    // The value font, or the smaller caption font if the text would be wider than maxWidth.
+    function fitFont(dc as Dc, text as String, maxWidth as Numeric) as Graphics.FontType {
+        return dc.getTextWidthInPixels(text, Fonts.value) > maxWidth ? Fonts.caption : Fonts.value;
     }
 
     // Gauge fill 0.0-1.0, or null when the field has no natural range.
