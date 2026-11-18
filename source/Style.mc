@@ -42,6 +42,11 @@ module Style {
         return Settings.style == MINIMAL ? 0.8 : 1.0;
     }
 
+    // Overlap's poster digits fill the centre, so its arc icons sit at the arc ends.
+    function arcIconsInside() as Boolean {
+        return Settings.style != OVERLAP;
+    }
+
     function arcPenRatio() as Float {
         return ARC_PEN;
     }
@@ -76,7 +81,7 @@ module Style {
             case SERIF:   return StyleSerif.centers();
             case ANALOG:  return StyleAnalog.centers();
         }
-        var out = StyleClassic.podCenters(Layout.POD_DISTANCE);
+        var out = StyleClassic.podCenters(Pod.contentDistance());
         out.addAll(StyleClassic.arcCenters([0, 1, 2, 3]));
         return out;
     }

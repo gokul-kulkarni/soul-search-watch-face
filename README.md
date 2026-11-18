@@ -23,7 +23,7 @@ Screenshots from the Connect IQ simulator (Forerunner 970) with its sample data.
 
 | Style | Look | Slots used |
 |---|---|---|
-| Classic | Stacked Roboto Condensed Bold time, 4 arc gauges, 4 pods at the edge on soft tinted discs | all 8 |
+| Classic | Stacked Roboto Condensed Bold time; 4 edge tabs (filled half-circles) joined by 4 arc gauges into one border; arc icons sit inside their values | all 8 |
 | Overlap | Poster-size digits: dim hours behind, bright minutes in front | the 4 arcs |
 | Serif | Pridi serif numerals on a dial: hairline ring, minute ticks, hour marks | the 4 pods, as text |
 | HUD | Seven-segment time, labelled outlined cells (1 above, 3 below) | the 4 pods |
@@ -32,6 +32,7 @@ Screenshots from the Connect IQ simulator (Forerunner 970) with its sample data.
 
 Every style has its own always-on view; Minimal's keeps its data line.
 Arcs fill upward: top arcs toward 12, bottom arcs from 6 toward 9/3. Edges are anti-aliased.
+Classic's arcs run tab to tab; Overlap keeps shorter arcs with icons at their ends.
 
 ## Fields (any slot, 28 + None)
 | Group | Fields (icon) |

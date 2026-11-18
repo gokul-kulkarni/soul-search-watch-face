@@ -2,23 +2,23 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
 
-// Diagonal bezel gauge: tinted track + progress arc with rounded caps, an icon
-// at the arc's vertical end, and the value set along the curve.
+// Diagonal bezel gauge: tinted track + progress arc, the value set along the
+// curve, and the icon just inside the value.
 module Gauge {
 
-    const SPAN = 46;           // degrees of arc
-    const ICON_GAP = 10;       // degrees between arc end and icon centre
     const ARC_INSET = 0.075;   // arc radius = R * (1 - ARC_INSET)
     const TEXT_INSET = 0.24;   // value radius = R * (1 - TEXT_INSET)
-    const ICON_RATIO = 0.13;
+    const ICON_RATIO = 0.11;
+    const ICON_INSET = 0.15;   // icon radius = value radius - this
 
-    // spec: [fill start angle, direction (+1 ccw / -1 cw), icon angle].
+    // spec: [fill start angle, direction (+1 ccw / -1 cw), icon angle (outside layout)].
     function draw(dc as Dc, field as Number, spec as Array<Number>) as Void {
         if (field == Fields.NONE) {
             return;
         }
         var start = spec[0];
         var dir = spec[1];
+        var span = Layout.arcSpan();
         var radius = Layout.r;
         var r = radius * (1 - ARC_INSET);
         var pen = (radius * Style.arcPenRatio()).toNumber();
@@ -27,16 +27,23 @@ module Gauge {
         var frac = FieldStyle.progress(field, n);
         var color = FieldStyle.tint(field, n);
 
-        arc(dc, Layout.cx, Layout.cy, r, pen, start, start + dir * SPAN, dir, Theme.tint(color, Theme.TRACK_TINT));
+        arc(dc, Layout.cx, Layout.cy, r, pen, start, start + dir * span, dir, Theme.tint(color, Theme.TRACK_TINT));
         if (frac != null && frac > 0.0) {
-            arc(dc, Layout.cx, Layout.cy, r, pen, start, start + dir * SPAN * frac, dir, color);
+            arc(dc, Layout.cx, Layout.cy, r, pen, start, start + dir * span * frac, dir, color);
         }
 
-        var iconDeg = spec[2];
-        Icons.draw(dc, field, Geometry.x(Layout.cx, r, iconDeg), Geometry.y(Layout.cy, r, iconDeg),
+        // Icon just inside the value on the arc's middle angle; in styles whose
+        // time fills the centre (Overlap), just past the arc's far end instead.
+        var iconDeg = start + dir * span / 2;
+        var ir = radius * (1 - TEXT_INSET - ICON_INSET);
+        if (!Style.arcIconsInside()) {
+            iconDeg = spec[2];
+            ir = r;
+        }
+        Icons.draw(dc, field, Geometry.x(Layout.cx, ir, iconDeg), Geometry.y(Layout.cy, ir, iconDeg),
             radius * ICON_RATIO, color, frac);
 
-        label(dc, radius * (1 - TEXT_INSET), start + dir * SPAN / 2, FieldStyle.format(field, n));
+        label(dc, radius * (1 - TEXT_INSET), start + dir * span / 2, FieldStyle.format(field, n));
     }
 
     // Smooth native arc with clean flat ends. Round caps were dropped: the

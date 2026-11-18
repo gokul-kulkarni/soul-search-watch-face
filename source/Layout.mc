@@ -5,20 +5,40 @@ import Toybox.Math;
 // tap targets always match what is on screen. Fractions are of screen radius.
 module Layout {
 
-    const POD_DISTANCE = 0.76;   // pods sit at the edge, between the arcs
-    const POD_RADIUS = 0.17;
+    const POD_DISTANCE = 1.0;    // tab centres sit on the screen edge
+    const POD_RADIUS = 0.3;
     // Per pod: x direction, y direction, outward angle of its frame.
     const POD_DIRS = [[0, -1, 90], [-1, 0, 180], [1, 0, 0], [0, 1, 270]] as Array<Array<Number>>;
 
-    // Per arc: [fill start angle, direction (+1 ccw / -1 cw), icon angle].
-    // Every arc fills upward: top arcs rise toward 12 o'clock, bottom arcs rise
-    // from near 6 o'clock toward 9 / 3. Icons sit at the vertical end.
+    // Per arc: [fill start angle, direction (+1 ccw / -1 cw)]. Each arc runs
+    // from one edge tab to the next (17 deg either side of each cardinal point
+    // is where the arc circle meets a tab). Every arc fills upward: top arcs
+    // rise toward 12 o'clock, bottom arcs rise from near 6 toward 9 / 3.
     const ARC_SPECS = [
+        [163, -1, 0],
+        [17, 1, 0],
+        [253, -1, 0],
+        [287, 1, 0]
+    ] as Array<Array<Number>>;
+    const ARC_SPAN = 55;
+
+    // Shorter arcs with their icon at the vertical end, for styles without
+    // edge tabs (Overlap): [fill start, direction, icon angle].
+    const ARC_SPECS_SHORT = [
         [166, -1, 111],
         [14, 1, 69],
         [240, -1, 249],
         [300, 1, 291]
     ] as Array<Array<Number>>;
+    const ARC_SPAN_SHORT = 46;
+
+    function arcSpec(i as Number) as Array<Number> {
+        return Style.arcIconsInside() ? ARC_SPECS[i] : ARC_SPECS_SHORT[i];
+    }
+
+    function arcSpan() as Number {
+        return Style.arcIconsInside() ? ARC_SPAN : ARC_SPAN_SHORT;
+    }
     const ARC_TARGET_RADIUS = 0.84;
     const HIT_RADIUS = 0.24;
 
@@ -46,7 +66,8 @@ module Layout {
     }
 
     function arcMid(i as Number) as Number {
-        return ARC_SPECS[i][0] + ARC_SPECS[i][1] * Gauge.SPAN / 2;
+        var spec = arcSpec(i);
+        return spec[0] + spec[1] * arcSpan() / 2;
     }
 
     // Slot under a touch point, or null if none is close. Positions come from

@@ -15,7 +15,7 @@ module StyleClassic {
     function drawArcs(dc as Dc, which as Array<Number>) as Void {
         for (var i = 0; i < which.size(); i++) {
             var a = which[i];
-            Gauge.draw(dc, Settings.slots[Settings.ARC_TL + a], Layout.ARC_SPECS[a]);
+            Gauge.draw(dc, Settings.slots[Settings.ARC_TL + a], Layout.arcSpec(a));
         }
     }
 
