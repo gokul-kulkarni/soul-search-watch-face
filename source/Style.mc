@@ -15,6 +15,7 @@ module Style {
     const NAMES = ["Classic", "Overlap", "Serif", "HUD", "Minimal", "Analog"] as Array<String>;
 
     const ARC_PEN = 0.034;
+    const ARC_PEN_CLASSIC = 0.05;   // heavier, to balance the edge tabs
 
     function count() as Number {
         return NAMES.size();
@@ -48,7 +49,7 @@ module Style {
     }
 
     function arcPenRatio() as Float {
-        return ARC_PEN;
+        return Settings.style == CLASSIC ? ARC_PEN_CLASSIC : ARC_PEN;
     }
 
 
