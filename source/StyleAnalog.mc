@@ -20,11 +20,15 @@ module StyleAnalog {
     const STRIPE_SHADE = 0.45;
     const TRACK_TINT = 0.35;
     const SUB_TINT = 0.22;
+    const GLOW_R = 0.71;          // accent halo between the sub-dials and the hour bars
+    const GLOW_STRENGTH = 0.5;
 
     function draw(dc as Dc) as Void {
         var fg = Theme.color(Theme.FG);
         Dial.minuteTrack(dc, 0.93, 0.975, Theme.tint(fg, TRACK_TINT));
         Dial.hourMarks(dc, 0.8, 0.93, (Layout.r * 0.035).toNumber(), fg, Theme.color(Theme.ACCENT), [3, 9]);
+        Grad.glow(dc, Layout.cx, Layout.cy, Layout.r * GLOW_R, Layout.r * 0.04, Layout.r * 0.08,
+            Theme.color(Theme.ACCENT), Theme.color(Theme.BG), GLOW_STRENGTH);
         var c = centers();
         subDial(dc, Settings.slots[Settings.POD_LEFT], c[0][1], c[0][2]);
         subDial(dc, Settings.slots[Settings.POD_RIGHT], c[1][1], c[1][2]);
@@ -44,11 +48,7 @@ module StyleAnalog {
         Gauge.ring(dc, x, y, r, pen, Theme.tint(color, SUB_TINT));
         var frac = FieldStyle.progress(field, n);
         if (frac != null && frac > 0.0) {
-            if (frac >= 1.0) {
-                Gauge.ring(dc, x, y, r, pen, color);
-            } else {
-                Gauge.arc(dc, x, y, r, pen, 90, 90 - 360 * frac, -1, color);
-            }
+            Gauge.gradArc(dc, x, y, r, pen, 90, 90 - 360 * (frac > 1.0 ? 1.0 : frac), color);
         }
         Icons.draw(dc, field, x, y - r * 0.4, Layout.r * 0.09, color, frac);
         var text = FieldStyle.format(field, n);

@@ -15,30 +15,21 @@ module Layout {
     // is where the arc circle meets a tab). Every arc fills upward: top arcs
     // rise toward 12 o'clock, bottom arcs rise from near 6 toward 9 / 3.
     const ARC_SPECS = [
-        [163, -1, 0],
-        [17, 1, 0],
-        [253, -1, 0],
-        [287, 1, 0]
+        [163, -1],
+        [17, 1],
+        [253, -1],
+        [287, 1]
     ] as Array<Array<Number>>;
     const ARC_SPAN = 55;
 
-    // Shorter arcs with their icon at the vertical end, for styles without
-    // edge tabs (Overlap): [fill start, direction, icon angle].
-    const ARC_SPECS_SHORT = [
-        [166, -1, 111],
-        [14, 1, 69],
-        [240, -1, 249],
-        [300, 1, 291]
-    ] as Array<Array<Number>>;
-    const ARC_SPAN_SHORT = 46;
-
     function arcSpec(i as Number) as Array<Number> {
-        return Style.arcIconsInside() ? ARC_SPECS[i] : ARC_SPECS_SHORT[i];
+        return ARC_SPECS[i];
     }
 
     function arcSpan() as Number {
-        return Style.arcIconsInside() ? ARC_SPAN : ARC_SPAN_SHORT;
+        return ARC_SPAN;
     }
+
     const ARC_TARGET_RADIUS = 0.84;
     const HIT_RADIUS = 0.24;
 

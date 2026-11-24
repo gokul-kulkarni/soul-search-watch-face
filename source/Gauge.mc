@@ -11,7 +11,7 @@ module Gauge {
     const ICON_RATIO = 0.11;
     const ICON_INSET = 0.15;   // icon radius = value radius - this
 
-    // spec: [fill start angle, direction (+1 ccw / -1 cw), icon angle (outside layout)].
+    // spec: [fill start angle, direction (+1 ccw / -1 cw)].
     function draw(dc as Dc, field as Number, spec as Array<Number>) as Void {
         if (field == Fields.NONE) {
             return;
@@ -29,17 +29,12 @@ module Gauge {
 
         arc(dc, Layout.cx, Layout.cy, r, pen, start, start + dir * span, dir, Theme.tint(color, Theme.TRACK_TINT));
         if (frac != null && frac > 0.0) {
-            arc(dc, Layout.cx, Layout.cy, r, pen, start, start + dir * span * frac, dir, color);
+            gradArc(dc, Layout.cx, Layout.cy, r, pen, start, start + dir * span * frac, color);
         }
 
-        // Icon just inside the value on the arc's middle angle; in styles whose
-        // time fills the centre (Overlap), just past the arc's far end instead.
+        // Icon just inside the value, on the arc's middle angle.
         var iconDeg = start + dir * span / 2;
         var ir = radius * (1 - TEXT_INSET - ICON_INSET);
-        if (!Style.arcIconsInside()) {
-            iconDeg = spec[2];
-            ir = r;
-        }
         Icons.draw(dc, field, Geometry.x(Layout.cx, ir, iconDeg), Geometry.y(Layout.cy, ir, iconDeg),
             radius * ICON_RATIO, color, frac);
 
@@ -58,6 +53,12 @@ module Gauge {
         dc.setPenWidth(pen);
         dc.drawArc(cx, cy, r, dir > 0 ? Graphics.ARC_COUNTER_CLOCKWISE : Graphics.ARC_CLOCKWISE, from, to);
         dc.setPenWidth(1);
+    }
+
+    // Progress arc whose colour runs along a ramp around the field colour.
+    function gradArc(dc as Dc, cx as Numeric, cy as Numeric, r as Numeric, pen as Number,
+                     from as Numeric, to as Numeric, color as Number) as Void {
+        Grad.arc(dc, cx, cy, r, pen, from, to, Grad.ramp(color));
     }
 
     // Full smooth ring.

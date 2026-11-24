@@ -20,9 +20,12 @@ Scripts in `scripts/` (copy to a scratch dir and run from there):
 4. **If every page shows the loading triangle, the simulator has stalled** after many reloads
    (seen after ~4–6 loads in a row): quit it (`osascript -e 'quit app "simulator"'; pkill -x simulator`),
    reopen, wait ~15 s, re-run. For batches, check each capture or restart proactively.
-5. Crop offsets scale with window pixel width: for FR970 at width 1510 px the screen centre is
-   (768, 912) with radius 452. Use `circle.sh`, which derives these from the width.
-6. Do not put the simulator's device skin (Garmin's artwork and logo) in public screenshots:
+5. Crop offsets scale with window pixel width: for FR970 at 1510x1792 px the screen centre is
+   (764, 891) with radius 452 (an older, taller window had (768, 912)). Use `circle.sh`, which derives
+   these from the width. If the crop shows bezel, re-measure the centre from a render (12 vs 6 numerals).
+6. Contact sheets: overlay the round crops on a black canvas; a plain hstack drops the alpha and the
+   bezel reappears in the corners.
+7. Do not put the simulator's device skin (Garmin's artwork and logo) in public screenshots:
    crop to the screen only.
 
 ## Faking data safely

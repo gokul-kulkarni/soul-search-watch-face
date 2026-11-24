@@ -3,49 +3,46 @@ import Toybox.Lang;
 
 // Seven-segment digits drawn as slanted hexagonal bars, instrument style.
 // Segment bits: a=top, b=top-right, c=bottom-right, d=bottom, e=bottom-left,
-// f=top-left, g=middle.
+// f=top-left, g=middle. Lit segments carry a vertical gradient.
 module Segments {
 
     const MASKS = [63, 6, 91, 79, 102, 109, 125, 7, 127, 111] as Array<Number>;
     const WIDTH_RATIO = 0.56;   // digit width / height
     const THICK_RATIO = 0.13;   // bar thickness / height
     const GAP_RATIO = 0.16;     // space between digits / height
+    const COLON_RATIO = 0.22;   // colon width / height
     const SKEW = 0.1;           // italic slant
 
     // HH:MM centred on (cx, cy). offColor draws unlit segments; null skips them.
     function drawTime(dc as Dc, cx as Numeric, cy as Numeric, h as Numeric,
                       hourColor as Number, minuteColor as Number, colonColor as Number, offColor as Number?) as Void {
-        var p = Clock.stackedParts();
-        var w = h * WIDTH_RATIO;
-        var gap = h * GAP_RATIO;
-        var colonW = h * 0.22;
-        var total = 4 * w + 2 * gap + 2 * gap + colonW;
-        var x = cx - total / 2;
         var top = cy - h / 2;
-        var digits = p[0] + p[1];
-        for (var i = 0; i < 4; i++) {
-            var ch = digits.substring(i, i + 1);
-            var d = ch == null ? null : ch.toNumber();
-            var color = i < 2 ? hourColor : minuteColor;
-            digit(dc, d == null ? 0 : d, x, top, w, h, color, offColor);
-            x += w + gap;
-            if (i == 1) {
-                colon(dc, x + colonW / 2 - gap / 2, cy, h, colonColor);
-                x += colonW + gap;
-            }
+        if (offColor != null) {
+            dc.setColor(offColor, Graphics.COLOR_TRANSPARENT);
+            new SegmentRun(cx, cy, h, 0, 4, false).paint(dc);
         }
+        Grad.bands(dc, top, top + h, Grad.ramp(hourColor), new SegmentRun(cx, cy, h, 0, 2, true).method(:paint));
+        Grad.bands(dc, top, top + h, Grad.ramp(minuteColor), new SegmentRun(cx, cy, h, 2, 4, true).method(:paint));
+        var gap = h * GAP_RATIO;
+        colon(dc, digitX(cx, h, 2) - h * COLON_RATIO / 2 - gap * 1.5, cy, h, colonColor);
     }
 
-    function digit(dc as Dc, d as Number, x as Numeric, y as Numeric, w as Numeric, h as Numeric,
-                   on as Number, off as Number?) as Void {
+    // Left edge of digit i (0-3) in HH:MM centred on cx.
+    function digitX(cx as Numeric, h as Numeric, i as Number) as Numeric {
+        var w = h * WIDTH_RATIO;
+        var gap = h * GAP_RATIO;
+        var total = 4 * w + 4 * gap + h * COLON_RATIO;
+        var x = cx - total / 2 + i * (w + gap);
+        return i >= 2 ? x + h * COLON_RATIO + gap : x;
+    }
+
+    // Draws the lit (or unlit) segments of digit d in the current colour.
+    function digit(dc as Dc, d as Number, x as Numeric, y as Numeric, w as Numeric, h as Numeric, lit as Boolean) as Void {
         var mask = MASKS[d];
         for (var seg = 0; seg < 7; seg++) {
-            var lit = (mask & (1 << seg)) != 0;
-            if (!lit && off == null) {
-                continue;
+            if (((mask & (1 << seg)) != 0) == lit) {
+                dc.fillPolygon(segment(seg, x, y, w, h));
             }
-            dc.setColor(lit ? on : off as Number, Graphics.COLOR_TRANSPARENT);
-            dc.fillPolygon(segment(seg, x, y, w, h));
         }
     }
 
@@ -93,5 +90,30 @@ module Segments {
             out.add([pts[i][0] + (mid - pts[i][1]) * SKEW, pts[i][1]]);
         }
         return out;
+    }
+}
+
+// Digits from..to-1 of the current time, lit or unlit segments only, in the current colour.
+class SegmentRun {
+    private var _cx as Numeric;
+    private var _cy as Numeric;
+    private var _h as Numeric;
+    private var _from as Number;
+    private var _to as Number;
+    private var _lit as Boolean;
+
+    function initialize(cx as Numeric, cy as Numeric, h as Numeric, from as Number, to as Number, lit as Boolean) {
+        _cx = cx; _cy = cy; _h = h; _from = from; _to = to; _lit = lit;
+    }
+
+    function paint(dc as Dc) as Void {
+        var p = Clock.stackedParts();
+        var digits = p[0] + p[1];
+        var w = _h * Segments.WIDTH_RATIO;
+        for (var i = _from; i < _to; i++) {
+            var ch = digits.substring(i, i + 1);
+            var d = ch == null ? null : ch.toNumber();
+            Segments.digit(dc, d == null ? 0 : d, Segments.digitX(_cx, _h, i), _cy - _h / 2, w, _h, _lit);
+        }
     }
 }

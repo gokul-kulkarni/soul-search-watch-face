@@ -62,10 +62,20 @@ description: Design rules and rendering pitfalls for Garmin AMOLED watch faces (
 - Tabs at 12 and 6 clash with arc icons placed past the arc ends: move those icons inside the arc,
   just inward of the value text.
 
+## Gradients, outlines, glow (no native support)
+- Take design *principles* from reference photos (gradient, outline vs solid, layering, glow) and
+  apply them to the existing styles; do not clone the reference layouts.
+- Vertical gradient on anything: redraw it once per horizontal band with `setClip` (12 bands), each
+  band in its ramp colour; outer bands stretch to the screen edge. Text spans its cap height (~0.72 x size).
+- Outline text: draw it at 8 offsets (~0.012 R) in the outline colour, then once in the background colour.
+- Gradient arcs: 2° `drawArc` segments with 1° overlap (4° steps show visible bands).
+- Glow: concentric 3 px circles fading from the colour to the background. On a light theme it reads as a groove.
+- Ramps from the user's colour: hue-shift ±24° (HSV), so every theme and picker colour works; greys stay grey.
+
 ## Layout
-- The arc layout can depend on the style. Overlap's poster digits fill the centre, so its arc icons
-  must stay at the arc ends (shorter 46° arcs); Classic, with tabs, uses tab-to-tab arcs with icons
-  inside. Check every style that shares arc code after changing it.
+- Styles that look alike get merged: Classic and Overlap differed only in having outer stats or
+  overlapping digits, so the user merged them (overlap digits at 1.25x inside tabs + arcs; 1.4x
+  touched the arc icons). Check every style that shares arc code after changing it.
 - Show frame variants side by side before choosing (partial ring, full ring, none, soft disc,
   half-circle tab): users pick differently from what you would guess.
 - Compute every position as a fraction of the screen radius, so devices of other sizes just work.

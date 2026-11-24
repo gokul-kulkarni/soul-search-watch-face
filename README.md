@@ -9,11 +9,10 @@ Configurable, crash-safe, AMOLED-aware watch face. Sideloaded, not store-publish
 <table>
 <tr>
 <td align="center"><img src="docs/screenshots/classic.png" width="220" alt="Classic style"><br><b>Classic</b></td>
-<td align="center"><img src="docs/screenshots/overlap.png" width="220" alt="Overlap style"><br><b>Overlap</b></td>
 <td align="center"><img src="docs/screenshots/serif.png" width="220" alt="Serif style"><br><b>Serif</b></td>
+<td align="center"><img src="docs/screenshots/hud.png" width="220" alt="HUD style"><br><b>HUD</b></td>
 </tr>
 <tr>
-<td align="center"><img src="docs/screenshots/hud.png" width="220" alt="HUD style"><br><b>HUD</b></td>
 <td align="center"><img src="docs/screenshots/minimal.png" width="220" alt="Minimal style"><br><b>Minimal</b></td>
 <td align="center"><img src="docs/screenshots/analog.png" width="220" alt="Analog chronograph style"><br><b>Analog</b></td>
 </tr>
@@ -23,16 +22,16 @@ Screenshots from the Connect IQ simulator (Forerunner 970) with its sample data.
 
 | Style | Look | Slots used |
 |---|---|---|
-| Classic | Stacked Roboto Condensed Bold time; 4 edge tabs (filled half-circles) joined by 4 arc gauges into one border; arc icons sit inside their values | all 8 |
-| Overlap | Poster-size digits: dim hours behind, bright minutes in front | the 4 arcs |
-| Serif | Pridi serif numerals on a dial: hairline ring, minute ticks, hour marks | the 4 pods, as text |
-| HUD | Seven-segment time, labelled outlined cells (1 above, 3 below) | the 4 pods |
-| Minimal | Large one-line time, thin progress ring round the bezel, date + one field | bottom pod, top-left arc (ring) |
-| Analog | Chronograph: sub-dials at 3 and 9, field at 6, bar markers, bold hands | left, right, bottom pods |
+| Classic | Overlapping time: outlined hours behind, gradient minutes in front; 4 edge tabs (filled half-circles) joined by 4 gradient arc gauges into one border; arc icons sit inside their values | all 8 |
+| Serif | Pridi serif numerals on a dial with a soft accent glow behind them: hairline ring, minute ticks, hour marks | the 4 pods, as text |
+| HUD | Seven-segment time with gradient-lit segments, labelled outlined cells (1 above, 3 below) | the 4 pods |
+| Minimal | Large one-line time with gradient minutes, thin gradient progress ring round the bezel, date + one field | bottom pod, top-left arc (ring) |
+| Analog | Chronograph: accent glow ring, gradient sub-dials at 3 and 9, field at 6, bar markers, bold hands | left, right, bottom pods |
 
 Every style has its own always-on view; Minimal's keeps its data line.
 Arcs fill upward: top arcs toward 12, bottom arcs from 6 toward 9/3. Edges are anti-aliased.
-Classic's arcs run tab to tab; Overlap keeps shorter arcs with icons at their ends.
+Classic's arcs run tab to tab. Gradients come from the chosen colour, shifted a little in hue either
+way, so they follow every theme and colour pick.
 
 ## Fields (any slot, 28 + None)
 | Group | Fields (icon) |
@@ -65,7 +64,8 @@ recovery, sleep score, Pulse Ox, UV, rain and temperature change colour with the
 | `FaceView.mc` | Hands drawing to the active style; anti-aliasing; crash fallback |
 | `Layout.mc` | Slot positions, shared by drawing and long-press hit-testing |
 | `FaceDelegate.mc` | Long-press → open the field's Garmin app |
-| `Style*.mc` | One file per style (Classic, Overlap, Serif, HUD, Minimal, Analog) |
+| `Style*.mc` | One file per style (Classic, Serif, HUD, Minimal, Analog) |
+| `Grad.mc` / `Shine.mc` | Gradients (banded clipping, arc segments, glow) and gradient / outlined time digits |
 | `Gauge.mc` / `Pod.mc` / `Dial.mc` / `Segments.mc` | Arc gauges, pods, dial ticks, seven-segment digits |
 | `Fields.mc` | Field catalogue: ids, names, one read per field, long-press target |
 | `FieldStyle.mc` | Text, gauge fill and value-driven colour per field |

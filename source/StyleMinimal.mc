@@ -38,11 +38,7 @@ module StyleMinimal {
         Gauge.ring(dc, Layout.cx, Layout.cy, r, pen, Theme.tint(color, TRACK_TINT));
         var frac = FieldStyle.progress(field, n);
         if (frac != null && frac > 0.0) {
-            if (frac >= 1.0) {
-                Gauge.ring(dc, Layout.cx, Layout.cy, r, pen, color);
-            } else {
-                Gauge.arc(dc, Layout.cx, Layout.cy, r, pen, 90, 90 - 360 * frac, -1, color);
-            }
+            Gauge.gradArc(dc, Layout.cx, Layout.cy, r, pen, 90, 90 - 360 * (frac > 1.0 ? 1.0 : frac), color);
         }
     }
 
@@ -60,8 +56,7 @@ module StyleMinimal {
         dc.drawText(x, cy, font, p[0], just);
         dc.setColor(colonColor, Graphics.COLOR_TRANSPARENT);
         dc.drawText(x + hw, cy, font, ":", just);
-        dc.setColor(minuteColor, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x + hw + cw, cy, font, p[1], just);
+        Shine.text(dc, x + hw + cw, cy, font, p[1], just, Style.timePx(), Grad.ramp(minuteColor), false);
     }
 
     // Always-on keeps the data line too: dim time plus the field's value.

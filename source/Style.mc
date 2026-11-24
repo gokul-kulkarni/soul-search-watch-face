@@ -6,14 +6,14 @@ import Toybox.Lang;
 module Style {
 
     const CLASSIC = 0;
-    const OVERLAP = 1;
-    const SERIF = 2;
-    const HUD = 3;
-    const MINIMAL = 4;
-    const ANALOG = 5;
+    const SERIF = 1;
+    const HUD = 2;
+    const MINIMAL = 3;
+    const ANALOG = 4;
 
-    const NAMES = ["Classic", "Overlap", "Serif", "HUD", "Minimal", "Analog"] as Array<String>;
+    const NAMES = ["Classic", "Serif", "HUD", "Minimal", "Analog"] as Array<String>;
 
+    const CLASSIC_SCALE = 1.25;   // overlapping digits, sized to clear the tabs and arc icons
     const ARC_PEN = 0.034;
     const ARC_PEN_CLASSIC = 0.05;   // heavier, to balance the edge tabs
 
@@ -33,19 +33,19 @@ module Style {
 
     // Time font size relative to the chosen Large/Medium/Small size.
     function timeScale() as Float {
-        if (Settings.style == OVERLAP) { return 1.55; }
+        if (Settings.style == CLASSIC) { return CLASSIC_SCALE; }
         if (Settings.style == SERIF) { return 1.3; }
         if (Settings.style == MINIMAL) { return 1.2; }
         return 1.0;
     }
 
-    function aodScale() as Float {
-        return Settings.style == MINIMAL ? 0.8 : 1.0;
+    // Pixel size of the time font, for gradients that span the digits.
+    function timePx() as Float {
+        return Layout.r * TimeSize.font() * timeScale();
     }
 
-    // Overlap's poster digits fill the centre, so its arc icons sit at the arc ends.
-    function arcIconsInside() as Boolean {
-        return Settings.style != OVERLAP;
+    function aodScale() as Float {
+        return Settings.style == MINIMAL ? 0.8 : 1.0;
     }
 
     function arcPenRatio() as Float {
@@ -55,7 +55,6 @@ module Style {
 
     function draw(dc as Dc) as Void {
         switch (Settings.style) {
-            case OVERLAP: StyleOverlap.draw(dc); break;
             case SERIF:   StyleSerif.draw(dc); break;
             case HUD:     StyleHud.draw(dc); break;
             case MINIMAL: StyleMinimal.draw(dc); break;
@@ -76,7 +75,6 @@ module Style {
     // [[slot, x, y], ...] for every slot this style shows.
     function slotCenters() as Array<Array<Numeric>> {
         switch (Settings.style) {
-            case OVERLAP: return StyleClassic.arcCenters([0, 1, 2, 3]);
             case HUD:     return StyleHud.centers();
             case MINIMAL: return StyleMinimal.centers();
             case SERIF:   return StyleSerif.centers();

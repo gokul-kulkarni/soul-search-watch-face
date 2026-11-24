@@ -12,6 +12,8 @@ module StyleSerif {
     const RING_TINT = 0.35;
     const MINUTE_TINT = 0.3;
     const HOUR_TINT = 0.75;
+    const GLOW_R = 0.5;          // soft accent halo behind the numerals
+    const GLOW_STRENGTH = 0.55;
 
     function draw(dc as Dc) as Void {
         var fg = Theme.color(Theme.FG);
@@ -21,6 +23,8 @@ module StyleSerif {
         Dial.minuteTrack(dc, 0.92, 0.955, Theme.tint(fg, MINUTE_TINT));
         Dial.hourMarks(dc, 0.87, 0.955, 2, Theme.tint(fg, HOUR_TINT), Theme.color(Theme.ACCENT), [] as Array<Number>);
 
+        Grad.glow(dc, Layout.cx, Layout.cy, Layout.r * GLOW_R, Layout.r * 0.07, Layout.r * 0.16,
+            Theme.color(Theme.ACCENT), Theme.color(Theme.BG), GLOW_STRENGTH);
         StyleClassic.drawStackedTime(dc, Layout.r * TimeSize.offset() * Style.timeScale());
 
         var c = centers();
